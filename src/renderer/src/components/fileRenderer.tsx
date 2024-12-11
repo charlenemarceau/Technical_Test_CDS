@@ -7,7 +7,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import GUI from 'lil-gui';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { arrayBuffer } from 'stream/consumers';
+import React, { useEffect, useRef } from 'react';
 
 
 const FileRenderer = ({ setFileData }) => {
@@ -21,6 +21,41 @@ const FileRenderer = ({ setFileData }) => {
 //   closeFolders: false,
 // });
 
+// gui.add(options, 'mode', ['Normal', 'Wireframe', 'Shaded']).name('Mode');
+// gui.add(model.scale, 'x', 0.1, 5).name('Scale X');
+//   gui.add(model.scale, 'y', 0.1, 5).name('Scale Y');
+//   gui.add(model.scale, 'z', 0.1, 5).name('Scale Z');
+// Clipping plane : un plan horizontal initial
+// const plane = new THREE.Plane(new THREE.Vector3(0, -1, 0), 0); // Orientation Y descendante
+// renderer.localClippingEnabled = true; // Activer les clipping planes
+// const planeFolder = gui.addFolder('Clipping Plane');
+//     const planeParams = {
+//       constant: 0, // Décale le plan
+//       x: 0, // Orientation X
+//       y: -1, // Orientation Y
+//       z: 0, // Orientation Z
+//     };
+
+//     planeFolder.add(planeParams, 'constant', -1, 1, 0.01).name('Plane Offset').onChange((value) => {
+//       plane.constant = value;
+//     });
+
+//     planeFolder.add(planeParams, 'x', -1, 1, 0.01).name('Plane Normal X').onChange((value) => {
+//       plane.normal.x = value;
+//       plane.normal.normalize(); // Normaliser pour éviter les artefacts
+//     });
+
+//     planeFolder.add(planeParams, 'y', -1, 1, 0.01).name('Plane Normal Y').onChange((value) => {
+//       plane.normal.y = value;
+//       plane.normal.normalize();
+//     });
+
+//     planeFolder.add(planeParams, 'z', -1, 1, 0.01).name('Plane Normal Z').onChange((value) => {
+//       plane.normal.z = value;
+//       plane.normal.normalize();
+//     });
+
+//     planeFolder.open();
 // Canvas
 const canvas = document.querySelector('canvas.webgl');
 
@@ -53,95 +88,140 @@ mesh.rotation.reorder('YXZ')
 mesh.rotation.x = Math.PI * 0.25;
 mesh.rotation.y = Math.PI * 0.25;
 
-// sizes
-const sizes = {
-  width: 500,
-  height: 400
-}
+// let mixer = null;
+// const gltfLoader = new GLTFLoader()
+// // if (setFileData) {
+//   console.log('setFileData.path', setFileData.path)
 
-//camera is an object
-const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height);
-camera.position.z = 3;
-scene.add(camera)
+//   gltfLoader.load(
+//     setFileData.path,
+//     (gltf) =>
+//       {
+//         console.log('glTF', gltf)
+//         gltf.scene.scale.set(0.025, 0.025, 0.025)
+//         window.onload = (e) => {
+//         scene.add(gltf.scene)
+//       }
 
-//lookAt rotates the object so that its -z faces the target you provided
-// camera.lookAt(new THREE.Vector3(0, -1, 0));
-// camera.lookAt(mesh.position);
-
-//renderer (provides a picture)
-const container = document.getElementById('canva');
-if (container) {
-  const renderer = new THREE.WebGLRenderer({
-    canvas: canvas
-  });
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.render(scene, camera);
-  // Redimensionner le canvas
-  window.addEventListener('resize', () => {
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-  });
-}
-
-// if (setFileData) {
-//     // Déterminer l'extension du fichier pour choisir le bon loader
-//     const ext = setFileData ? setFileData.path.split('.').pop()?.toLowerCase() : undefined;
-//     if (ext === 'glb' || ext === 'gltf') {
-//       console.log('ext', ext);
-//         const loader = new GLTFLoader();
-//         loader.load(setFileData, function(gltf) {
-//             const model = gltf.scene;
-//             scene.add(model);
-//             model.scale.set(2, 2, 2);  // Mise à l'échelle du modèle
-//             model.position.set(0, 0, 0);  // Position initiale
-//         }, undefined, function(error) {
-//             console.error('Erreur lors du chargement du modèle GLTF:', error);
-//         });
-//     } else if (ext === 'obj') {
-//         const loader = new OBJLoader();
-//         loader.load(setFileData, function(obj) {
-//             scene.add(obj);
-//             obj.scale.set(1, 1, 1);  // Mise à l'échelle
-//             obj.position.set(0, 0, 0);  // Position initiale
-//         }, undefined, function(error) {
-//             console.error('Erreur lors du chargement du modèle OBJ:', error);
-//         });
-//     } else {
-//       // Rediriger l'utilisateur vers la page de démarrage
-//       window.location.href = 'index.html';
-//       alert('Format de fichier non pris en charge');
+//         // Animation
+//         // mixer = new THREE.AnimationMixer(gltf.scene)
+//         // const action = mixer.clipAction(gltf.animations[2])
+//         // action.play()
+//     },
+//     undefined,
+//     (error) => {
+//         console.error('Erreur de chargement GLTF:', error);
 //     }
-// } else {
-//     alert('Aucun modèle trouvé dans sessionStorage.');
-// }
+//   )
 
-const file = setFileData;
-  if (file) {
-    const reader = new FileReader();
+/**
+ * Floor
+ */
+const floor = new THREE.Mesh(
+  new THREE.PlaneGeometry(10, 10),
+  new THREE.MeshStandardMaterial({
+      color: '#444444',
+      metalness: 0,
+      roughness: 0.5
+  })
+)
+floor.receiveShadow = true
+floor.rotation.x = - Math.PI * 0.5
+scene.add(floor)
 
-    reader.onload = (e) => {
-      const arrayBuffer = setFileData;
-      const loader = new GLTFLoader();
-      console.log("Modèle :", e);
+/**
+ * Lights
+ */
+const ambientLight = new THREE.AmbientLight(0xffffff, 2.4)
+scene.add(ambientLight)
 
-      // Charger le modèle à partir du buffer
-      loader.parse(
-        arrayBuffer,
-        "",
-        (gltf) => {
-          console.log("Modèle chargé :", gltf);
-          scene.add(gltf.scene); // Ajoutez le modèle à votre scène
-        },
-        (error) => {
-          console.error("Erreur de chargement :", error);
-        }
-      );
-    };
+const directionalLight = new THREE.DirectionalLight(0xffffff, 1.8)
+directionalLight.castShadow = true
+directionalLight.shadow.mapSize.set(1024, 1024)
+directionalLight.shadow.camera.far = 15
+directionalLight.shadow.camera.left = - 7
+directionalLight.shadow.camera.top = 7
+directionalLight.shadow.camera.right = 7
+directionalLight.shadow.camera.bottom = - 7
+directionalLight.position.set(- 5, 5, 0)
+scene.add(directionalLight)
 
-    reader.readAsArrayBuffer(file);
-  }
+/**
+ * Sizes
+ */
+const sizes = {
+  width: window.innerWidth,
+  height: window.innerHeight
+}
+window.onload = (e) => {
+  window.addEventListener('resize', () =>
+  {
+    // Update sizes
+    sizes.width = window.innerWidth
+    sizes.height = window.innerHeight
 
+    // Update camera
+    camera.aspect = sizes.width / sizes.height
+    camera.updateProjectionMatrix()
+
+    // Update renderer
+    renderer.setSize(sizes.width, sizes.height)
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+  })
+  /**
+   * Camera
+  */
+ // Base camera
+ const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
+ camera.position.set(2, 2, 2)
+ scene.add(camera)
+
+// Controls
+const controls = new OrbitControls(camera, canvas)
+controls.target.set(0, 0.75, 0)
+controls.enableDamping = true
+
+/**
+* Renderer
+*/
+const renderer = new THREE.WebGLRenderer({
+  canvas: canvas
+})
+
+renderer.shadowMap.enabled = true
+renderer.shadowMap.type = THREE.PCFSoftShadowMap
+renderer.setSize(sizes.width, sizes.height)
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+
+/**
+ * Animate
+*/
+const clock = new THREE.Clock()
+let previousTime = 0
+
+const tick = () =>
+  {
+    const elapsedTime = clock.getElapsedTime()
+    previousTime = elapsedTime
+
+    // Model animation
+    // if(mixer)
+    // {
+    //     mixer.update(deltaTime)
+    // }
+
+    // Update controls
+    controls.update()
+
+    // Render
+    renderer.render(scene, camera)
+
+    // Call tick again on the next frame
+    window.requestAnimationFrame(tick)
+}
+
+tick()
+}
 
   return (
     <div id="canva">
