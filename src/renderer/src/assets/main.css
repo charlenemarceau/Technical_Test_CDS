@@ -88,8 +88,6 @@ input[type=file]::file-selector-button:hover {
   color: black;
 }
 
-
-
 #file_name {
   text-align: center;
 }
@@ -111,4 +109,15 @@ input[type=file]::file-selector-button:hover {
 canvas {
   padding: 30px;
   border-radius: 50px;
+}
+
+h2 {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  margin-top: 25px;
+}
+
+li {
+  margin:25px
 }

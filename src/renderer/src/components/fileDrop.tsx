@@ -40,7 +40,7 @@ const FileDrop = ({ sendFileData }) => {
           type="file"
           id="fileInput"
           accept=".glb, .gltf, .usdz, .fbx"
-          onChange={(e) => setFile()}
+          onChange={setFile}
         ></input>
       </div>
     </div>

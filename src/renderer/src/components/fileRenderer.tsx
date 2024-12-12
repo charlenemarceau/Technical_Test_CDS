@@ -3,13 +3,29 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import * as THREE from 'three';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import GUI from 'lil-gui'
+import gsap from 'gsap'
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 
-const FileRenderer = ({ setFileData }) => {
+const FileRenderer = ({ setFileData, setUrlData }) => {
+
+
+  /**
+ * LIL GUI - DEBUG
+ */
+  const gui = new GUI({
+    width: 300,
+    title: 'Viewing options',
+    closeFolders: false,
+  });
+
   // Référence pour le canvas
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  let mixer: THREE.AnimationMixer | null = null;
 
   useEffect(() => {
     if (!canvasRef.current) {
@@ -19,23 +35,37 @@ const FileRenderer = ({ setFileData }) => {
 
     // Initialisation de la scène
     const scene = new THREE.Scene();
-    const gltfLoader = new GLTFLoader()
+    scene.background = new THREE.Color( 0xA3AEF6 );
+    console.log('test', setFileData.path,)
+ // Object Loader
+  let object3D: THREE.Object3D | null = null;
 
+  if (setFileData) {
+    const fileExtension = setFileData?.name.split('.').pop()?.toLowerCase();
+    const loader = fileExtension === 'gltf' || fileExtension === 'glb' ? new GLTFLoader() : new OBJLoader();
 
-    gltfLoader.load(
-      setFileData.path,
-      (gltf) =>
-      {
-          gltf.scene.scale.set(0.025, 0.025, 0.025)
-          scene.add(gltf.scene)
-
-          // Animation
-          // mixer = new THREE.AnimationMixer(gltf.scene)
-          // const action = mixer.clipAction(gltf.animations[2])
-          // action.play()
+    console.log('OB', loader, fileExtension, setUrlData);
+    loader.load(
+      setUrlData,
+      (object) => {
+        if (object3D) {
+          scene.remove(object3D); // Remove the previous object if exists
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        object3D = fileExtension === 'gltf' || fileExtension === 'glb' ? (object as any).scene : object;
+        object3D.scale.set(0.5, 0.5, 0.5);
+        scene.add(object3D);
+        // Animation
+        mixer = new THREE.AnimationMixer(object3D.scene)
+        const action = mixer.clipAction(object3D.animations[2])
+        action.play()
+      },
+      undefined,
+      (error) => {
+        console.error('Error loading the model:', error);
       }
-  )
-
+    );
+    }
     /**
      * Floor
      */
@@ -75,7 +105,7 @@ const FileRenderer = ({ setFileData }) => {
     // Taille du canvas
     const sizes = {
       width: (window.innerWidth / 3) * 2,
-      height: (window.innerWidth / 3) * 2,
+      height: (window.innerWidth / 3) * 1.75,
     };
 
     // Caméra
@@ -105,17 +135,17 @@ const FileRenderer = ({ setFileData }) => {
     const tick = () =>
       {
           const elapsedTime = clock.getElapsedTime()
-          // const deltaTime = elapsedTime - previousTime
+          const deltaTime = elapsedTime - previousTime
           previousTime = elapsedTime
 
           // Model animation
-          // if(mixer)
-          // {
-          //     mixer.update(deltaTime)
-          // }
+          if(mixer)
+          {
+              mixer.update(deltaTime)
+          }
 
           // Update controls
-          // controls.update()
+          controls.update()
 
           // Render
           renderer.render(scene, camera)
@@ -129,7 +159,7 @@ const FileRenderer = ({ setFileData }) => {
     // Gestion du redimensionnement
     const handleResize = () => {
       sizes.width = (window.innerWidth / 3) * 2;
-      sizes.height = (window.innerWidth / 3) * 2;
+      sizes.height = (window.innerWidth / 3) * 1.75;
 
       camera.aspect = sizes.width / sizes.height;
       camera.updateProjectionMatrix();
@@ -146,6 +176,7 @@ const FileRenderer = ({ setFileData }) => {
       renderer.dispose();
     };
   }, []);
+
   return (
     <div id="canva">
       <div className="canva_content">
@@ -153,7 +184,7 @@ const FileRenderer = ({ setFileData }) => {
         <div className="canvas_content">
           <canvas ref={canvasRef} className="webgl"></canvas>
           <div className="informations_content">
-            <h3>Informations</h3>
+            <h2>Details</h2>
             <ul>
               <li>Vertices: </li>
               <li>Triangles: </li>
