@@ -40,9 +40,6 @@ const menuItems = [
     label: 'Window',
     submenu: [
       {
-        role: 'Minimize'
-      },
-      {
         role: 'close'
       }
     ]
@@ -67,8 +64,6 @@ function createWindow(): void {
       allowRunningInsecureContent: true
     }
   })
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools()
 
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()

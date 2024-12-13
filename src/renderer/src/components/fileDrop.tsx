@@ -1,9 +1,3 @@
-/* eslint-disable prettier/prettier */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable react/prop-types */
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
-
 import { useRef } from "react";
 
 const FileDrop = ({ sendFileData }: { sendFileData: (file: File) => void }) => {
@@ -43,32 +37,26 @@ const FileDrop = ({ sendFileData }: { sendFileData: (file: File) => void }) => {
   };
 
   return (
-    <div
-      id="dropzone"
-      ref={dropzoneRef}
-      onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
-      onDrop={handleDrop}
-      style={{
-        width: "100%",
-        padding: "20px",
-        border: "2px dashed #00f",
-        textAlign: "center",
-        borderRadius: "10px",
-        cursor: "pointer",
-      }}
-    >
-      <div className="index_content">
-        <h3>Drag and drop your 3D Object</h3>
-        <p>or</p>
-        <h3>Select your 3D Object</h3>
-        <input
-          type="file"
-          id="fileInput"
-          accept=".glb, .gltf, .usdz, .fbx, .obj, .stl"
-          onChange={handleFileInputChange}
-          style={{ display: "block", margin: "10px auto" }}
-        />
+    <div className="flex items-center justify-center global">
+      <div
+        id="dropzone"
+        ref={dropzoneRef}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+      >
+        <div className="index_content">
+          <h3>Drag and drop your 3D Object</h3>
+          <p>or</p>
+          <h3>Select your 3D Object</h3>
+          <input
+            type="file"
+            id="fileInput"
+            accept=".glb, .gltf, .usdz, .fbx, .obj, .stl"
+            onChange={handleFileInputChange}
+            style={{ display: "block", margin: "10px auto" }}
+          />
+        </div>
       </div>
     </div>
   )

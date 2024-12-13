@@ -1,8 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable prettier/prettier */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable react/prop-types */
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import * as THREE from 'three';
 import { useEffect, useRef, useState } from 'react';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
@@ -132,96 +127,99 @@ const FileRenderer = ({ setFileData, setUrlData }) => {
       undefined,
       (error) => {
         console.error('Error loading the model:', error);
-        // window.location.href = 'index.html';
+        window.location.href = 'index.html';
         alert(`Something went wrong. ${error}`);
       });
     }
 
-  /**
-   * Floor
-   */
-  const floor = new THREE.Mesh(
-    new THREE.PlaneGeometry(500, 500),
-    new THREE.MeshStandardMaterial({
-        color: '#444444',
-        metalness: 0,
-        roughness: 0.5
-    })
-  );
-  floor.receiveShadow = true;
-  floor.rotation.x = - Math.PI * 0.5;
-  scene.add(floor);
-  /**
-  * Lights
-  */
-  const ambientLight = new THREE.AmbientLight(0xffffff, 2.4);
-  scene.add(ambientLight);
-  const directionalLight = new THREE.DirectionalLight(0xffffff, 1.8);
-  directionalLight.castShadow = true;
-  directionalLight.shadow.mapSize.set(1024, 1024);
-  directionalLight.shadow.camera.far = 15;
-  directionalLight.shadow.camera.left = - 7;
-  directionalLight.shadow.camera.top = 7;
-  directionalLight.shadow.camera.right = 7;
-  directionalLight.shadow.camera.bottom = - 7;
-  directionalLight.position.set(- 5, 5, 0);
-  scene.add(directionalLight);
-  // Axes Helper
-  const axesHelper = new THREE.AxesHelper(2);
-  axesHelper.visible = true;
-  const guiControls = { showAxes: false }; // Contrôle initial pour les axes
-  gui.add(guiControls, 'showAxes')
-  .name('Afficher Axes')
-  .onChange((value) => {
-    axesHelper.visible = value; // Montre ou cache les axes
-  });
-  scene.add(axesHelper);
-  // Taille du canvas
-  const sizes = {
-    width: (window.innerWidth / 3) * 2,
-    height: (window.innerWidth / 3) * 1.75,
-  };
-  // Caméra
-  // Base camera
-  const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
-  // camera.position.set(2, 2, 2);
-  scene.add(camera);
-  // Controls
-  const controls = new OrbitControls(camera, canvasRef.current);
-  controls.target.set(0, 0.75, 0);
-  controls.enableDamping = true;
-  // Renderer
-  const renderer = new THREE.WebGLRenderer({
-    canvas: canvasRef.current,
-    antialias: true,
-  });
-  renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-  renderer.setSize(sizes.width, sizes.height);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    /**
+     * Floor
+     */
+    const floor = new THREE.Mesh(
+      new THREE.PlaneGeometry(500, 500),
+      new THREE.MeshStandardMaterial({
+          color: '#444444',
+          metalness: 0,
+          roughness: 0.5
+      })
+    );
+    floor.receiveShadow = true;
+    floor.rotation.x = - Math.PI * 0.5;
+    scene.add(floor);
 
-  // Plan de découpe
-  const clippingPlane = new THREE.Plane(new THREE.Vector3(0, 0, -1), clippingPlaneZ);
-  renderer.localClippingEnabled = true;
+    /**
+    * Lights
+    */
+    const ambientLight = new THREE.AmbientLight(0xffffff, 2.4);
+    scene.add(ambientLight);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1.8);
+    directionalLight.castShadow = true;
+    directionalLight.shadow.mapSize.set(1024, 1024);
+    directionalLight.shadow.camera.far = 15;
+    directionalLight.shadow.camera.left = - 7;
+    directionalLight.shadow.camera.top = 7;
+    directionalLight.shadow.camera.right = 7;
+    directionalLight.shadow.camera.bottom = - 7;
+    directionalLight.position.set(- 5, 5, 0);
+    scene.add(directionalLight);
 
-  gui.add(clippingPlane, 'constant', -50, 100).name('Clipping Z').onChange((value) => {
-    clippingPlane.constant = value;
-    setClippingPlaneZ(value);
-  });
+    // Axes Helper
+    const axesHelper = new THREE.AxesHelper(2);
+    axesHelper.visible = true;
+    const guiControls = { showAxes: false }; // Contrôle initial pour les axes
+    gui.add(guiControls, 'showAxes')
+    .name('Afficher Axes')
+    .onChange((value) => {
+      axesHelper.visible = value; // Montre ou cache les axes
+    });
+    scene.add(axesHelper);
+
+    // Taille du canvas
+    const sizes = {
+      width: (window.innerWidth / 3) * 2,
+      height: (window.innerWidth / 3) * 1.75,
+    };
+
+    // Base camera
+    const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
+    // camera.position.set(2, 2, 2);
+    scene.add(camera);
+    // Controls
+    const controls = new OrbitControls(camera, canvasRef.current);
+    controls.target.set(0, 0.75, 0);
+    controls.enableDamping = true;
+    // Renderer
+    const renderer = new THREE.WebGLRenderer({
+      canvas: canvasRef.current,
+      antialias: true,
+    });
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.setSize(sizes.width, sizes.height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    // Plan de découpe
+    const clippingPlane = new THREE.Plane(new THREE.Vector3(0, 0, -1), clippingPlaneZ);
+    renderer.localClippingEnabled = true;
+
+    gui.add(clippingPlane, 'constant', -50, 100).name('Clipping Z').onChange((value) => {
+      clippingPlane.constant = value;
+      setClippingPlaneZ(value);
+    });
 
     const clock = new THREE.Clock();
     let previousTime = 0;
 
     const tick = () =>
       {
-          const elapsedTime = clock.getElapsedTime();
-          previousTime = elapsedTime;
-          // Update controls
-          controls.update();
-          // Render
-          renderer.render(scene, camera);
-          // Call tick again on the next frame
-          window.requestAnimationFrame(tick);
+        const elapsedTime = clock.getElapsedTime();
+        previousTime = elapsedTime;
+        // Update controls
+        controls.update();
+        // Render
+        renderer.render(scene, camera);
+        // Call tick again on the next frame
+        window.requestAnimationFrame(tick);
       }
 
       tick();
@@ -262,11 +260,11 @@ const FileRenderer = ({ setFileData, setUrlData }) => {
             <div>
               <h2>Details</h2>
               <ul>
-                <li>Vertices: {verticesCount}</li>
-                <li>Triangles: {trianglesCount}</li>
-                <li>Size X: {dimensions.x.toFixed(2)} cm</li>
-                <li>Size Y: {dimensions.y.toFixed(2)} cm</li>
-                <li>Size Z: {dimensions.z.toFixed(2)} cm</li>
+                <div className='values'><li>Vertices:</li><span>{verticesCount}</span></div>
+                <div className='values'><li>Triangles:</li><span>{trianglesCount}</span></div>
+                <div className='values'><li>Size X:</li><span>{dimensions.x.toFixed(2)} cm</span></div>
+                <div className='values'><li>Size Y:</li><span>{dimensions.y.toFixed(2)} cm</span></div>
+                <div className='values'><li>Size Z:</li> <span>{dimensions.z.toFixed(2)} cm</span></div>
               </ul>
               <p>Depending on the size of your object, you might need to zoom in or zoom out.</p>
             </div>
