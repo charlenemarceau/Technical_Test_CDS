@@ -268,6 +268,7 @@ const FileRenderer = ({ setFileData, setUrlData }) => {
                 <li>Size Y: {dimensions.y.toFixed(2)} cm</li>
                 <li>Size Z: {dimensions.z.toFixed(2)} cm</li>
               </ul>
+              <p>Depending on the size of your object, you might need to zoom in or zoom out.</p>
             </div>
             <div className="buttonCss">
             <button onClick={goToHome}>Return</button>
