@@ -11,7 +11,6 @@ function App(): JSX.Element {
   const [url, setUrl] = useState('');
 
   const handleFile = (data) => {
-    console.log(data)
     setFile(data)
     setUrl(URL.createObjectURL(data))
   }

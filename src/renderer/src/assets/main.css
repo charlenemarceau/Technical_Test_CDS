@@ -24,7 +24,9 @@ a:hover {
 }
 
 h1 {
+  position: relative;
   top: 30px;
+  margin-bottom: 60px;
   font-size: 3.2em;
   line-height: 1.1;
   display: flex;
@@ -73,7 +75,7 @@ button:focus-visible {
   justify-content: center;
 }
 
-input[type=file]::file-selector-button {
+input[type=file]::file-selector-button, button {
   border: 2px solid #485DED;
   padding: 10px;
   border-radius: 10px;
@@ -82,7 +84,7 @@ input[type=file]::file-selector-button {
   color:#ffffff;
 }
 
-input[type=file]::file-selector-button:hover {
+input[type=file]::file-selector-button:hover, button:hover {
   background-color: #ffffff;
   border: 2px solid #485DED;
   color: black;
@@ -104,6 +106,9 @@ input[type=file]::file-selector-button:hover {
 .informations_content {
   padding: 10px;
   flex: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
 }
 
 canvas {
@@ -120,4 +125,9 @@ h2 {
 
 li {
   margin:25px
+}
+
+.buttonCss {
+  display: flex;
+  justify-content: center;
 }

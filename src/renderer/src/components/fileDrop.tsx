@@ -8,7 +8,6 @@ const FileDrop = ({ sendFileData }) => {
 
   const dropzone: any = document.getElementById('dropzone');
 
-
   window.onload = (e) => {
     dropzone.addEventListener('dragover', (e) => {
           e.stopPropagation();
@@ -39,7 +38,7 @@ const FileDrop = ({ sendFileData }) => {
         <input
           type="file"
           id="fileInput"
-          accept=".glb, .gltf, .usdz, .fbx"
+          accept=".glb, .gltf, .usdz, .fbx, .obj, .stl"
           onChange={setFile}
         ></input>
       </div>
