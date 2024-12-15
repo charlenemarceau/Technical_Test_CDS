@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable prettier/prettier */
 import * as THREE from 'three';
 import { useEffect, useRef, useState } from 'react';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
@@ -5,14 +7,18 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import GUI from 'lil-gui'
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
+import icon from "../assets/icon.png";
 
 const FileRenderer = ({ setFileData, setUrlData }) => {
   const [verticesCount, setVerticesCount] = useState(0);
   const [trianglesCount, setTrianglesCount] = useState(0);
   const [dimensions, setDimensions] = useState({ x: 0, y: 0, z: 0 });
-  const [clippingPlaneZ, setClippingPlaneZ] = useState(100);
+  // const [clippingPlaneZ, setClippingPlaneZ] = useState(100);
   const [isCanvasReady, setIsCanvasReady] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [clippingPositionZ, setClippingPositionZ] = useState(100);
+  const [clippingPlaneZ, setClippingPlaneZ] = useState(100);
+  const [updateClippingPlane, setUpdateClippingPlane] = useState<((value: number) => void) | null>(null);
 
   /**
   * LIL GUI - DEBUG
@@ -62,7 +68,7 @@ const FileRenderer = ({ setFileData, setUrlData }) => {
       loader.load(
         setUrlData,
         (object) => {
-        object3D = fileExtension === 'gltf' || fileExtension === 'glb' ? (object as any).scene : object;
+        object3D = fileExtension === 'gltf' || fileExtension === 'glb'  || fileExtension === 'stl' ? (object as any).scene : object;
 
         // Render the scene
         object3D.scale.set(0.5, 0.5, 0.5);
@@ -96,17 +102,26 @@ const FileRenderer = ({ setFileData, setUrlData }) => {
 
         // GUI
         setTimeout(() => {
-          gui.add(object3D, 'visible').name('Visible');
+
           object3D.traverse((child) => {
             if (child.isMesh) {
               child.material.clippingPlanes = [clippingPlane];
+              child.material.clipShadows = true; // Ajoute des ombres coupées
+              child.material.opacity = 0.8; // Ajuste l'opacité pour montrer l'effet
               child.material.clipIntersection = true;
               const material = child.material;
-                gui.add(material, 'wireframe');
+              //GUI
+              gui.add(object3D, 'visible').name('Visible');
+              gui.add(material, 'wireframe');
+              gui.add(guiControls, 'showAxes')
+              .name('Afficher Axes')
+              .onChange((value) => {
+                axesHelper.visible = value; // Montre ou cache les axes
+                scene.add(axesHelper);
+              });
               const geometry = child.geometry;
-
-            // Verify if the geometry has vertices
-            let totalVertices = 0;
+              // Verify if the geometry has vertices
+              let totalVertices = 0;
               if (geometry && geometry.attributes.position) {
                 totalVertices += geometry.attributes.position.count;
                 setVerticesCount(totalVertices);
@@ -121,8 +136,6 @@ const FileRenderer = ({ setFileData, setUrlData }) => {
             setDimensions({ x: size.x, y: size.y, z: size.z }); // Update dimensions
           })
         }, 100);
-
-        ;
       },
       undefined,
       (error) => {
@@ -136,7 +149,7 @@ const FileRenderer = ({ setFileData, setUrlData }) => {
      * Floor
      */
     const floor = new THREE.Mesh(
-      new THREE.PlaneGeometry(500, 500),
+      new THREE.PlaneGeometry(700, 700),
       new THREE.MeshStandardMaterial({
           color: '#444444',
           metalness: 0,
@@ -167,12 +180,7 @@ const FileRenderer = ({ setFileData, setUrlData }) => {
     const axesHelper = new THREE.AxesHelper(2);
     axesHelper.visible = true;
     const guiControls = { showAxes: false }; // Contrôle initial pour les axes
-    gui.add(guiControls, 'showAxes')
-    .name('Afficher Axes')
-    .onChange((value) => {
-      axesHelper.visible = value; // Montre ou cache les axes
-    });
-    scene.add(axesHelper);
+
 
     // Taille du canvas
     const sizes = {
@@ -182,7 +190,7 @@ const FileRenderer = ({ setFileData, setUrlData }) => {
 
     // Base camera
     const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
-    // camera.position.set(2, 2, 2);
+    camera.position.set(2, 2, 2);
     scene.add(camera);
     // Controls
     const controls = new OrbitControls(camera, canvasRef.current);
@@ -198,31 +206,32 @@ const FileRenderer = ({ setFileData, setUrlData }) => {
     renderer.setSize(sizes.width, sizes.height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-    // Plan de découpe
+    // Clipping Plane
     const clippingPlane = new THREE.Plane(new THREE.Vector3(0, 0, -1), clippingPlaneZ);
     renderer.localClippingEnabled = true;
 
-    gui.add(clippingPlane, 'constant', -50, 100).name('Clipping Z').onChange((value) => {
+    const updateClippingPlaneFunc = (value) => {
       clippingPlane.constant = value;
       setClippingPlaneZ(value);
-    });
+    };
+    setUpdateClippingPlane(() => updateClippingPlaneFunc);
 
     const clock = new THREE.Clock();
     let previousTime = 0;
 
-    const tick = () =>
-      {
-        const elapsedTime = clock.getElapsedTime();
-        previousTime = elapsedTime;
-        // Update controls
-        controls.update();
-        // Render
-        renderer.render(scene, camera);
-        // Call tick again on the next frame
-        window.requestAnimationFrame(tick);
-      }
+    const tick = () => {
+      const elapsedTime = clock.getElapsedTime();
+      previousTime = elapsedTime;
 
-      tick();
+      // Update controls
+      controls.update();
+      // Render
+      renderer.render(scene, camera);
+      // Call tick again on the next frame
+      window.requestAnimationFrame(tick);
+    }
+
+    tick();
 
     // Gestion du redimensionnement
     const handleResize = () => {
@@ -250,15 +259,20 @@ const FileRenderer = ({ setFileData, setUrlData }) => {
     window.location.href = 'index.html';
   }
 
+
   return (
     <div id="canva">
       <div className="canva_content">
-        <h2 id="file_name">{setFileData.name}</h2>
         <div className="canvas_content">
           <canvas ref={canvasRef} className="webgl"></canvas>
           <div className="informations_content">
             <div>
+              <div className='title'>
+                <img src={icon} alt="icon" className='icon'/>
+                <h1 className="text-lg">3D Viewer</h1>
+              </div>
               <h2>Details</h2>
+              <h2 id="file_name" className="name">{setFileData.name}</h2>
               <ul>
                 <div className='values'><li>Vertices:</li><span>{verticesCount}</span></div>
                 <div className='values'><li>Triangles:</li><span>{trianglesCount}</span></div>
@@ -268,10 +282,30 @@ const FileRenderer = ({ setFileData, setUrlData }) => {
               </ul>
               <p>Depending on the size of your object, you might need to zoom in or zoom out.</p>
             </div>
-            <div className="buttonCss">
+            <label>
+              <span>Clipping Z: {clippingPlaneZ}</span>
+              <br />
+              <input
+                type="range"
+                min="-100"
+                max="100"
+                step="1"
+                value={clippingPlaneZ}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setClippingPlaneZ(value);
+                  // Appeler la fonction stockée dans l'état
+                  if (updateClippingPlane) {
+                    updateClippingPlane(value);
+                  }
+                }}
+                className="styled-range"
+              />
+            </label>
+          <div className="buttonCss">
             <button onClick={goToHome}>Return</button>
-            </div>
           </div>
+        </div>
         </div>
       </div>
     </div>

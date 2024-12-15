@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import FileDrop from './components/fileDrop'
 import FileRenderer from './components/fileRenderer'
-import icon from "./assets/icon.png"
 
 function App(): JSX.Element {
   // const ipcHandle = (): void => window.electron.ipcRenderer.send('ping')
@@ -16,10 +15,6 @@ function App(): JSX.Element {
 
   return (
     <>
-      <div className='title'>
-      <img src={icon} alt="icon" className='icon'/>
-      <h1 className="text-lg">3D Viewer</h1>
-      </div>
       {file ? <FileRenderer setFileData={file} setUrlData={url}/> : <FileDrop sendFileData={handleFile}/>}
     </>
   )

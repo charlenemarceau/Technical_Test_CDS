@@ -1,4 +1,6 @@
 import { useRef } from "react";
+import icon from "../assets/icon.png";
+
 
 const FileDrop = ({ sendFileData }: { sendFileData: (file: File) => void }) => {
   const dropzoneRef = useRef<HTMLDivElement | null>(null);
@@ -37,7 +39,7 @@ const FileDrop = ({ sendFileData }: { sendFileData: (file: File) => void }) => {
   };
 
   return (
-    <div className="flex items-center justify-center global">
+    <div className="global">
       <div
         id="dropzone"
         ref={dropzoneRef}
@@ -45,10 +47,14 @@ const FileDrop = ({ sendFileData }: { sendFileData: (file: File) => void }) => {
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
       >
+        <div className='title'>
+          <img src={icon} alt="icon" className='icon'/>
+          <h1 className="text-lg">3D Viewer</h1>
+        </div>
         <div className="index_content">
-          <h3>Drag and drop your 3D Object</h3>
+          <h3>Drag and drop your 3D model</h3>
           <p>or</p>
-          <h3>Select your 3D Object</h3>
+          <h3>Select your 3D model</h3>
           <input
             type="file"
             id="fileInput"
@@ -56,6 +62,7 @@ const FileDrop = ({ sendFileData }: { sendFileData: (file: File) => void }) => {
             onChange={handleFileInputChange}
             style={{ display: "block", margin: "10px auto" }}
           />
+          {/* <p>(.obj, glb, gltf)</p> */}
         </div>
       </div>
     </div>
