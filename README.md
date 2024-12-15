@@ -1,6 +1,6 @@
-# electron-app
+# 3D Viewer
 
-An Electron application with React and TypeScript
+An Electron application with React and TypeScript.
 
 ## Recommended IDE Setup
 
@@ -32,3 +32,7 @@ $ npm run build:mac
 # For Linux
 $ npm run build:linux
 ```
+
+#### How to use the app
+
+The app only tested for .obj and .glb 3D modals.
