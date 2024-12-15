@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable react/prop-types */
 /* eslint-disable prettier/prettier */
 import * as THREE from 'three';
@@ -16,7 +19,6 @@ const FileRenderer = ({ setFileData, setUrlData }) => {
   // const [clippingPlaneZ, setClippingPlaneZ] = useState(100);
   const [isCanvasReady, setIsCanvasReady] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [clippingPositionZ, setClippingPositionZ] = useState(100);
   const [clippingPlaneZ, setClippingPlaneZ] = useState(100);
   const [updateClippingPlane, setUpdateClippingPlane] = useState<((value: number) => void) | null>(null);
 
@@ -210,19 +212,18 @@ const FileRenderer = ({ setFileData, setUrlData }) => {
     const clippingPlane = new THREE.Plane(new THREE.Vector3(0, 0, -1), clippingPlaneZ);
     renderer.localClippingEnabled = true;
 
-    const updateClippingPlaneFunc = (value) => {
+    const updateClippingPlaneFunc = (value: number) => {
       clippingPlane.constant = value;
       setClippingPlaneZ(value);
     };
     setUpdateClippingPlane(() => updateClippingPlaneFunc);
 
     const clock = new THREE.Clock();
-    let previousTime = 0;
 
     const tick = () => {
       const elapsedTime = clock.getElapsedTime();
-      previousTime = elapsedTime;
-
+      const previousTime = elapsedTime;
+      previousTime;
       // Update controls
       controls.update();
       // Render
@@ -293,10 +294,9 @@ const FileRenderer = ({ setFileData, setUrlData }) => {
                 value={clippingPlaneZ}
                 onChange={(e) => {
                   const value = e.target.value;
-                  setClippingPlaneZ(value);
-                  // Appeler la fonction stockée dans l'état
+                  setClippingPlaneZ(Number(e.target.value))
                   if (updateClippingPlane) {
-                    updateClippingPlane(value);
+                    updateClippingPlane(Number(value));
                   }
                 }}
                 className="styled-range"

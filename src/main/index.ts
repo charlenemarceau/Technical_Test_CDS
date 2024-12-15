@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-const { app, BrowserWindow, Menu, shell, ipcMain } = require('electron')
-const path = require('node:path')
-import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import icon from '../../resources/icon.png?asset'
+const { app, BrowserWindow, Menu, shell, ipcMain } = require('electron');
+const path = require('node:path');
+import { electronApp, optimizer, is } from '@electron-toolkit/utils';
+import icon from '../../resources/icon.png?asset';
 
 const menuItems = [
   {
@@ -46,10 +46,7 @@ const menuItems = [
       }
     ]
   }
-];
-
-const menu = Menu.buildFromTemplate(menuItems);
-Menu.setApplicationMenu(menu);
+]
 
 function createWindow(): void {
   // Create the browser window.
@@ -58,9 +55,6 @@ function createWindow(): void {
     height: 670,
     show: false,
     fullscreen: true,
-    // transparent: true,
-    frame: false,
-    autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: path.join(__dirname, '../preload/index.js'),
@@ -70,11 +64,13 @@ function createWindow(): void {
   });
 
   mainWindow.on('ready-to-show', () => {
+    const menu = Menu.buildFromTemplate(menuItems);
+    Menu.setApplicationMenu(menu);
     mainWindow.show();
   })
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url);

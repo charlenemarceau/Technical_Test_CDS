@@ -139,7 +139,7 @@ input[type=file]::file-selector-button:hover, button:hover {
   justify-content: space-around;
 }
 
-.informations_content p {
+.informations_content p, p.ext {
   color: gray;
   font-size: small;
   text-align: center;
@@ -163,7 +163,7 @@ h2.name {
   padding: 15px;
 }
 
-#dropzone h3, #dropzone p{
+#dropzone h3, #dropzone.or{
   font-size: 35px;
 }
 

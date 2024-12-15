@@ -1,6 +1,7 @@
+/* eslint-disable prettier/prettier */
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { useRef } from "react";
 import icon from "../assets/icon.png";
-
 
 const FileDrop = ({ sendFileData }: { sendFileData: (file: File) => void }) => {
   const dropzoneRef = useRef<HTMLDivElement | null>(null);
@@ -53,7 +54,7 @@ const FileDrop = ({ sendFileData }: { sendFileData: (file: File) => void }) => {
         </div>
         <div className="index_content">
           <h3>Drag and drop your 3D model</h3>
-          <p>or</p>
+          <p className="or">or</p>
           <h3>Select your 3D model</h3>
           <input
             type="file"
@@ -62,7 +63,7 @@ const FileDrop = ({ sendFileData }: { sendFileData: (file: File) => void }) => {
             onChange={handleFileInputChange}
             style={{ display: "block", margin: "10px auto" }}
           />
-          {/* <p>(.obj, glb, gltf)</p> */}
+          <p className="ext">(.obj, glb, gltf)</p>
         </div>
       </div>
     </div>
