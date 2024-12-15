@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
 const { app, BrowserWindow, Menu, shell, ipcMain } = require('electron');
 const path = require('node:path');
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';

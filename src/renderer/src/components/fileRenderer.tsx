@@ -1,8 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
-/* eslint-disable react/prop-types */
-/* eslint-disable prettier/prettier */
 import * as THREE from 'three';
 import { useEffect, useRef, useState } from 'react';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
@@ -16,7 +11,6 @@ const FileRenderer = ({ setFileData, setUrlData }) => {
   const [verticesCount, setVerticesCount] = useState(0);
   const [trianglesCount, setTrianglesCount] = useState(0);
   const [dimensions, setDimensions] = useState({ x: 0, y: 0, z: 0 });
-  // const [clippingPlaneZ, setClippingPlaneZ] = useState(100);
   const [isCanvasReady, setIsCanvasReady] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [clippingPlaneZ, setClippingPlaneZ] = useState(100);
@@ -257,9 +251,9 @@ const FileRenderer = ({ setFileData, setUrlData }) => {
   }, [isCanvasReady]);
 
   const goToHome = () => {
-    window.location.href = 'index.html';
+    window.location.
+    href = 'index.html';
   }
-
 
   return (
     <div id="canva">
