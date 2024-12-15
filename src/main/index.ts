@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 const { app, BrowserWindow, Menu, shell, ipcMain } = require('electron');
 const path = require('node:path');
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
@@ -44,7 +45,7 @@ const menuItems = [
       }
     ]
   }
-]
+] as any
 
 function createWindow(): void {
   // Create the browser window.
